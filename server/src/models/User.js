@@ -1,0 +1,54 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  phone: { type: String, required: true, trim: true },
+  password: { type: String, required: true },
+  role: {
+    type: String,
+    enum: [
+      'Customer',
+      'Super Admin',
+      'Owner',
+      'Store Manager',
+      'Cashier',
+      'Inventory Staff',
+      'Purchase Staff',
+      'Delivery Staff',
+      'Accountant',
+      'Customer Support'
+    ],
+    default: 'Customer'
+  },
+  addresses: [{
+    id: { type: String },
+    name: { type: String },
+    phone: { type: String },
+    houseFlat: { type: String },
+    street: { type: String },
+    areaVillage: { type: String },
+    city: { type: String, default: 'Dharmapuri' },
+    state: { type: String, default: 'Tamil Nadu' },
+    pincode: { type: String },
+    addressType: { type: String, enum: ['Home', 'Work', 'Other'], default: 'Home' },
+    isDefault: { type: Boolean, default: false }
+  }],
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  status: { type: String, enum: ['Active', 'Inactive', 'Blocked'], default: 'Active' },
+  avatar: { type: String, default: '' }
+}, { timestamps: true });
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+module.exports = mongoose.model('User', userSchema);

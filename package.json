@@ -1,0 +1,19 @@
+{
+  "name": "zyphor-zone-siva-store",
+  "version": "1.0.0",
+  "description": "ZYPHOR ZONE — Siva Department Store Full Stack MERN Application",
+  "main": "server/src/server.js",
+  "scripts": {
+    "start": "node server/src/server.js",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "seed": "cd server && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [],
+  "author": "ZYPHOR ZONE",
+  "license": "ISC"
+}
